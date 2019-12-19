@@ -1,5 +1,8 @@
 package tree
 
+import com.sun.jmx.remote.internal.ArrayQueue
+import java.util.*
+
 class TreeLinkBinTree<E> {
 
     private var root: TreeNode? = null
@@ -12,7 +15,7 @@ class TreeLinkBinTree<E> {
         this.root = TreeNode(data!!)
     }
 
-    fun addNode(parent: TreeNode, data: E, isLeft: Boolean): TreeNode {
+    fun addNode(parent: TreeNode?, data: E, isLeft: Boolean): TreeNode {
         if (parent == null) throw RuntimeException("parent 为空，无法添加子节点")
         if (isLeft && parent.left != null) throw RuntimeException("$parent 已经存在左节点，无法添加左节点")
         if (!isLeft && parent.right != null) throw RuntimeException("$parent 已经存在右节点，无法添加右节点")
@@ -81,12 +84,12 @@ class TreeLinkBinTree<E> {
         // 处理根结点
         list.add(node)
         // 递归处理左子树
-        node.left?.apply {
-            list.addAll(preIterator(this))
+        node.left?.let {
+            list.addAll(preIterator(it))
         }
         // 递归处理右子树
-        node.right?.apply {
-            list.addAll(preIterator(this))
+        node.right?.let {
+            list.addAll(preIterator(it))
         }
         return list
     }
@@ -96,14 +99,14 @@ class TreeLinkBinTree<E> {
         val list = mutableListOf<TreeNode>()
 
         // 递归处理左子树
-        node.left?.apply {
-            list.addAll(inIterator(this))
+        node.left?.let {
+            list.addAll(inIterator(it))
         }
         // 处理根结点
         list.add(node)
         // 递归处理右子树
-        node.right?.apply {
-            list.addAll(inIterator(this))
+        node.right?.let {
+            list.addAll(inIterator(it))
         }
         return list
     }
@@ -112,15 +115,37 @@ class TreeLinkBinTree<E> {
         val list = mutableListOf<TreeNode>()
 
         // 递归处理左子树
-        node.left?.apply {
-            list.addAll(lastIterator(this))
+        node.left?.let {
+            list.addAll(lastIterator(it))
         }
         // 递归处理右子树
-        node.right?.apply {
-            list.addAll(lastIterator(this))
+        node.right?.let {
+            list.addAll(lastIterator(it))
         }
         // 处理根结点
         list.add(node)
+        return list
+    }
+
+    // 广度优先遍历
+    fun breadFirst():List<TreeNode>{
+        val queue = ArrayDeque<TreeNode>()
+        val list = mutableListOf<TreeNode>()
+        if (root != null){
+            // 将根元素添加到队列中
+            queue.offer(root)
+        }
+        while (queue.isNotEmpty()){
+            // 将队列尾部的数据添加到list 中，peek 获得但是不移除
+            list.add(queue.peek())
+            val treeNode = queue.poll()
+            treeNode.left?.let {
+                queue.offer(it)
+            }
+            treeNode.right?.let {
+                queue.offer(it)
+            }
+        }
         return list
     }
 
@@ -140,6 +165,27 @@ class TreeLinkBinTree<E> {
                 this.right = right
                 this.parent = parent
             }
+
+            override fun toString(): String {
+                return "TreeNode(data=$data, parent=${parent?.data}, left=${left?.data}, right=${right?.data})\n"
+            }
+
+
         }
     }
+}
+
+
+fun main(args: Array<String>) {
+    val binTree = TreeLinkBinTree<String>("根结点")
+    val treeNode1 = binTree.addNode(binTree.root(), "第二层左节点", true)
+    val treeNode2 = binTree.addNode(binTree.root(), "第二层右节点", false)
+    val treeNode3 = binTree.addNode(treeNode2, "第三层左节点", true)
+    val treeNode4 = binTree.addNode(treeNode2, "第三层右节点", false)
+    val treeNode5 = binTree.addNode(treeNode3, "第四层左节点", true)
+    println("treeNode2 的左子节点：${binTree.leftChild(treeNode2)}")
+    println("treeNode2 的右子节点：${binTree.rightChild(treeNode2)}")
+    println("树的深度：${binTree.deep()}")
+    println("广度优先遍历： ${binTree.breadFirst()}")
+    println("先序遍历：${binTree.preIterator()}")
 }
