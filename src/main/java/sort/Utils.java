@@ -1,6 +1,6 @@
 package sort;
 
-public class Uitls {
+public class Utils {
     public static String show(int[] nums) {
         StringBuilder stringBuilder = new StringBuilder();
         for (int num : nums) {
