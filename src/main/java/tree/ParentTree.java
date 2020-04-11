@@ -4,15 +4,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * 父节点表示法：节点中维护了父节点的信息，本类中为父节点的索引值 parent
+ * 父节点表示法：
+ *
+ * 节点中维护了父节点的信息，本类中为父节点的索引值 parent
+ *
  * 用父节点表示法实现一棵树
  *
  */
-public class TreeParent<E> {
+public class ParentTree<E> {
+
     public static class Node<T> {
         T data;
         // 记录父节点位置
-        int parent;
+        int parentIndex;
 
         public Node() {
         }
@@ -21,16 +25,16 @@ public class TreeParent<E> {
             this.data = data;
         }
 
-        public Node(T data, int parent) {
+        public Node(T data, int parentIndex) {
             this.data = data;
-            this.parent = parent;
+            this.parentIndex = parentIndex;
         }
 
         @Override
         public String toString() {
             return "TreeParent$Node{" +
                     "data=" + data +
-                    ", parent=" + parent +
+                    ", parent=" + parentIndex +
                     '}';
         }
     }
@@ -41,7 +45,7 @@ public class TreeParent<E> {
     private int nodeNum;
 
     // 指定根结点创建树
-    public TreeParent(E data) {
+    public ParentTree(E data) {
         treeSize = DEFAULT_TREE_SIZE;
         nodes = new Node[treeSize];
         nodes[0] = new Node<E>(data, -1);
@@ -49,7 +53,7 @@ public class TreeParent<E> {
     }
 
     // 指定根结点和 treesize 创建树
-    public TreeParent(E data, int treeSize) {
+    public ParentTree(E data, int treeSize) {
         this.treeSize = treeSize;
         nodes = new Node[treeSize];
         nodes[0] = new Node<E>(data, -1);
@@ -78,7 +82,7 @@ public class TreeParent<E> {
 
     // 返回指定节点（非父节点）的父节点
     public Node<E> parent(Node node) {
-        return nodes[node.parent];
+        return nodes[node.parentIndex];
     }
 
     // 返回指定节点的所有子节点
@@ -86,7 +90,7 @@ public class TreeParent<E> {
         List<Node<E>> list = new ArrayList<>();
         for (int i = 0; i < treeSize; i++) {
             Node node = nodes[i];
-            if (node != null && node.parent == pos(parent)) {
+            if (node != null && node.parentIndex == pos(parent)) {
                 list.add(node);
             }
         }
@@ -95,17 +99,19 @@ public class TreeParent<E> {
 
     // 返回树的深度
     public int deep() {
+        // 记录整个树的深度
         int max = 0;
         for (int i = 0; i < treeSize && nodes[i] != null; i++) {
-            int def = 1;
-            int m = nodes[i].parent;
+            // currentNodeDeep 为当前节点的深度
+            int currentNodeDeep = 1;
+            int m = nodes[i].parentIndex;
             // 如果父节点存在，则继续向上搜索父节点
             while (m != -1 && nodes[m] != null) {
-                m = nodes[m].parent;
-                def++;
+                m = nodes[m].parentIndex;
+                currentNodeDeep++;
             }
-            if (max < def) {
-                max = def;
+            if (max < currentNodeDeep) {
+                max = currentNodeDeep;
             }
         }
         return max;

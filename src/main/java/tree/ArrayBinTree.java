@@ -34,6 +34,7 @@ public class ArrayBinTree<T> {
 
 
     private void initArrayBinTree(int deep){
+        // 性质：深度为 k 的二叉树，其节点数的总和最多为 2^k - 1
         this.arraySize = (int) (Math.pow(2, deep)) - 1;
         datas = new Object[arraySize];
     }
@@ -95,6 +96,7 @@ public class ArrayBinTree<T> {
         return deep;
     }
 
+    // 返回指定值的索引
     public int pos(T data){
         // 该循环实际上是按广度遍历来搜索每个节点
         for (int i = 0; i < arraySize; i++) {

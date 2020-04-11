@@ -109,7 +109,7 @@ class TreeChild<E>(data: E) {
         // 节点 Node中如果拥有子链，那么 SonNode 通过 next 用来维护 子链的关系，以及子链元素在数组中的索引
         class SonNode(val pos: Int, var next: SonNode?)
         // 树中的节点，
-        class Node<T>(private val data: T) {
+        open class Node<T>(private val data: T) {
             // 第一个子节点
             var first: SonNode? = null
             override fun toString(): String = if (first != null) {
